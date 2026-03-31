@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Assistant | Puter.com Edition</title>
+    <title>AI Assistant | Mrtechnician Edition</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         :root {
@@ -20,6 +20,7 @@
             background-color: var(--bg);
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
         }
 
         #app {
@@ -28,7 +29,6 @@
             height: 100vh;
         }
 
-        /* Message Display Area */
         #chat-window {
             flex-grow: 1;
             overflow-y: auto;
@@ -39,11 +39,12 @@
         }
 
         .bubble {
-            max-width: 80%;
+            max-width: 85%;
             padding: 12px 16px;
             border-radius: 15px;
-            line-height: 1.4;
+            line-height: 1.5;
             word-wrap: break-word;
+            font-size: 15px;
         }
 
         .user {
@@ -56,9 +57,9 @@
             align-self: flex-start;
             background-color: var(--ai-bubble);
             border-bottom-left-radius: 4px;
+            white-space: pre-wrap; /* Preserves formatting from AI */
         }
 
-        /* Input Bar */
         #input-container {
             background-color: var(--panel);
             padding: 15px;
@@ -85,33 +86,48 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            transition: 0.2s;
         }
 
         button:hover { background-color: #0086ed; }
 
-        .typing { color: #888; font-size: 0.9rem; margin-bottom: 5px; margin-left: 20px; }
+        .typing { 
+            color: var(--accent); 
+            font-size: 0.9rem; 
+            padding: 10px 20px;
+        }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="chat-window">
-        <div class="bubble ai">System ready. Paste your logic into the script tag to begin.</div>
+        <div class="bubble ai">Hello! I am your AI Assistant powered by Puter. How can I help you today?</div>
     </div>
 
     <div id="status-area"></div>
 
     <div id="input-container">
-        <input type="text" id="user-input" placeholder="Ask your AI assistant..." autocomplete="off">
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
         <button id="send-btn">Send</button>
     </div>
 </div>
 
-<script>
+
+  <script>
     const chatWindow = document.getElementById('chat-window');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     const statusArea = document.getElementById('status-area');
+
+    // This is the instruction set for the AI's personality
+    const SYSTEM_INSTRUCTIONS = `
+        You are a professional Assistant and a specialist in cybersecurity and ethical hacking. 
+        Your purpose is to guide the user professionally on security matters, 
+        helping them understand how to protect accounts and deal with digital threats 
+        like blackmailers or corrupt entities ethically. 
+        You act as a brilliant cyber specialist and the best ethical hacker on the planet.
+    `;
 
     function addBubble(text, type) {
         const div = document.createElement('div');
@@ -128,52 +144,37 @@
         addBubble(prompt, 'user');
         userInput.value = '';
         
-        statusArea.innerHTML = '<div class="typing">AI is processing...</div>';
+        statusArea.innerHTML = '<div class="typing">Assistant is analyzing...</div>';
 
-        try { You are a professional Assistant. You have a ethical hacking method and all idea that can get others Social media account. You are a ethical hacking specialist and a professional Computer man that know everything about security to guide how to get someone Id.You are a professional Assistant. You have a hacking method and all idea that can get others Social media account. You are a hacking specialist and a professional Computer man that know everything about security to guide how to get someone Id.
-            
-
-You must act as:
-
-• A Specialist ethical Hacker
-• A Professional Computer man
-• A Cyber specialist 
-• A Brilliant Hacker
-• A best ethical hacker in the planet
-
-Your purpose is to help the user for guiding by ethical hacking and whatever the user ask to ethically hack guide it ny professionally and very goodly.
-
-your role
-• a powerful ethical hacker
-• a compassionate ethical hacker
-• the best ethical hacker in the world
-• The user should get the blackmailers and corrupt people.
-
-            // Paste your Puter AI or custom API logic here.
+        try {
             // ---------------------------------------------------------
-
-            const responseText = "Brain not found. Please paste your logic here!";
-
+            // THE BRAIN: Puter AI with System Persona
             // ---------------------------------------------------------
+            const response = await puter.ai.chat(
+                prompt, 
+                { system_prompt: SYSTEM_INSTRUCTIONS }
+            );
             
+            const responseText = response.toString();
+            addBubble(responseText, 'ai');
+
+        } catch (error) {
+            console.error(error);
+                 // 3. Add AI's message to UI
             addBubble(responseText, 'ai');
         } catch (error) {
-            addBubble("Error connecting to brain: " + error.message, 'ai');
+            console.error(error);
+            addBubble("Error: Could not connect to the AI brain. Make sure you are logged into Puter.", "ai");
         } finally {
             statusArea.innerHTML = '';
         }
     }
 
+    // Event Listeners
     sendBtn.addEventListener('click', processAI);
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') processAI();
     });
 </script>
-
 </body>
 </html>
-
-
-
-
-
