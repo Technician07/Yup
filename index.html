@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Assistant | Mrtechnician Edition</title>
+    <title>Mrtechnician | Cyber Specialist AI</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         :root {
-            --bg: #1a1a1a;
-            --panel: #2d2d2d;
-            --text: #ffffff;
+            --bg: #0a0a0a;
+            --panel: #161616;
+            --text: #00ff41; /* Matrix/Hacker Green */
             --accent: #0078d4;
-            --ai-bubble: #3d3d3d;
-            --user-bubble: #005a9e;
+            --ai-bubble: #1f1f1f;
+            --user-bubble: #003366;
+            --border: #333;
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
             background-color: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         #app {
@@ -36,65 +36,72 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            border-bottom: 1px solid var(--border);
         }
 
         .bubble {
             max-width: 85%;
             padding: 12px 16px;
-            border-radius: 15px;
+            border-radius: 10px;
             line-height: 1.5;
             word-wrap: break-word;
-            font-size: 15px;
+            font-size: 14px;
+            border: 1px solid #444;
         }
 
         .user {
             align-self: flex-end;
             background-color: var(--user-bubble);
-            border-bottom-right-radius: 4px;
+            color: white;
         }
 
         .ai {
             align-self: flex-start;
             background-color: var(--ai-bubble);
-            border-bottom-left-radius: 4px;
-            white-space: pre-wrap; /* Preserves formatting from AI */
+            color: var(--text);
+            white-space: pre-wrap;
         }
 
+        /* Fixed Input Area */
         #input-container {
             background-color: var(--panel);
-            padding: 15px;
+            padding: 20px;
             display: flex;
             gap: 10px;
-            border-top: 1px solid #444;
+            align-items: center;
         }
 
-        input {
+        #user-input {
             flex-grow: 1;
-            background: #111;
-            border: 1px solid #555;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
+            background: #000;
+            border: 1px solid var(--text);
+            color: var(--text);
+            padding: 15px;
+            border-radius: 5px;
             outline: none;
+            font-family: inherit;
         }
 
-        button {
-            background-color: var(--accent);
-            color: white;
+        #send-btn {
+            background-color: var(--text);
+            color: #000;
             border: none;
-            padding: 0 20px;
-            border-radius: 8px;
+            padding: 15px 25px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
+            text-transform: uppercase;
         }
 
-        button:hover { background-color: #0086ed; }
+        #send-btn:hover {
+            background-color: #008f11;
+        }
 
-        .typing { 
-            color: var(--accent); 
-            font-size: 0.9rem; 
-            padding: 10px 20px;
+        .status {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 5px;
+            padding-left: 20px;
         }
     </style>
 </head>
@@ -102,32 +109,29 @@
 
 <div id="app">
     <div id="chat-window">
-        <div class="bubble ai">Hello! I am your AI Assistant powered by Puter. How can I help you today?</div>
+        <div class="bubble ai">SYSTEM INITIALIZED: Ethical Hacking Specialist Online. How can I assist with your security objectives?</div>
     </div>
 
-    <div id="status-area"></div>
+    <div id="status-area" class="status"></div>
 
     <div id="input-container">
-        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
-        <button id="send-btn">Send</button>
+        <input type="text" id="user-input" placeholder="Enter command or query..." autocomplete="off">
+        <button id="send-btn">SEND</button>
     </div>
 </div>
 
-
-  <script>
+<script>
+    // Elements
     const chatWindow = document.getElementById('chat-window');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     const statusArea = document.getElementById('status-area');
 
-    // This is the instruction set for the AI's personality
-    const SYSTEM_INSTRUCTIONS = `
-        You are a professional Assistant and a specialist in cybersecurity and ethical hacking. 
-        Your purpose is to guide the user professionally on security matters, 
-        helping them understand how to protect accounts and deal with digital threats 
-        like blackmailers or corrupt entities ethically. 
-        You act as a brilliant cyber specialist and the best ethical hacker on the planet.
-    `;
+    // THE BRAIN INSTRUCTIONS
+    const SYSTEM_PROMPT = `You are a professional Assistant, a Specialist ethical Hacker, and a Cyber specialist. 
+    You are the best ethical hacker on the planet. Your purpose is to guide the user professionally in 
+    ethical hacking and security. You help users deal with blackmailers and corrupt people 
+    by providing brilliant technical guidance and computer security expertise.`;
 
     function addBubble(text, type) {
         const div = document.createElement('div');
@@ -138,43 +142,44 @@
     }
 
     async function processAI() {
-        const prompt = userInput.value.trim();
-        if (!prompt) return;
+        const query = userInput.value.trim();
+        if (!query) return;
 
-        addBubble(prompt, 'user');
+        // Display User Input
+        addBubble(query, 'user');
         userInput.value = '';
         
-        statusArea.innerHTML = '<div class="typing">Assistant is analyzing...</div>';
+        statusArea.innerText = "EXPLOITING DATA... (Thinking)";
 
         try {
-            // ---------------------------------------------------------
-            // THE BRAIN: Puter AI with System Persona
-            // ---------------------------------------------------------
-            const response = await puter.ai.chat(
-                prompt, 
-                { system_prompt: SYSTEM_INSTRUCTIONS }
-            );
+            // CALLING THE PUTER BRAIN
+            const response = await puter.ai.chat(query, {
+                system_prompt: SYSTEM_PROMPT
+            });
             
-            const responseText = response.toString();
-            addBubble(responseText, 'ai');
-
+            addBubble(response.toString(), 'ai');
         } catch (error) {
             console.error(error);
-                 // 3. Add AI's message to UI
-            addBubble(responseText, 'ai');
-        } catch (error) {
-            console.error(error);
-            addBubble("Error: Could not connect to the AI brain. Make sure you are logged into Puter.", "ai");
+            addBubble("CONNECTION ERROR: Verify Puter.com login status.", "ai");
         } finally {
-            statusArea.innerHTML = '';
+            statusArea.innerText = "";
         }
     }
 
-    // Event Listeners
-    sendBtn.addEventListener('click', processAI);
-    userInput.addEventListener('keypress', (e) => {
+    // Logic to trigger the Send
+    sendBtn.onclick = processAI;
+
+    userInput.onkeypress = function(e) {
         if (e.key === 'Enter') processAI();
-    });
+    };
 </script>
+
 </body>
 </html>
+
+
+
+
+
+
+            
